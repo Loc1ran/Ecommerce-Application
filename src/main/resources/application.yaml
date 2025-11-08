@@ -1,0 +1,16 @@
+server:
+  port: 8080
+  error:
+    include-message: always
+
+spring:
+  application:
+    name: Ecommerce
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/store_api
+    username: ltt4456
+    password: password
+
+  jpa:
+    show-sql: true

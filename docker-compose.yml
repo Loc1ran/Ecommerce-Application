@@ -1,0 +1,23 @@
+services:
+  db:
+    container_name: store-api
+    image: postgres:latest
+    environment:
+      POSTGRES_USER: ltt4456
+      POSTGRES_PASSWORD: password
+      PGDATA: /data/ecommerce
+
+    volumes:
+      - db:/data/ecommerce
+    ports:
+      - "5432:5432"
+    networks:
+      - db
+    restart: unless-stopped
+
+networks:
+  db:
+    driver: bridge
+
+volumes:
+  db:
