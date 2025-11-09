@@ -34,16 +34,6 @@ public class User {
     @Builder.Default
     private List<Address> addresses = new ArrayList<>();
 
-    public void addAddress(Address address) {
-        addresses.add(address);
-        address.setUser(this);
-    }
-
-    public void removeAddress(Address address) {
-        addresses.remove(address);
-        address.setUser(null);
-    }
-
     @OneToOne(mappedBy = "user", cascade = CascadeType.REMOVE)
     private Profile profile;
 
