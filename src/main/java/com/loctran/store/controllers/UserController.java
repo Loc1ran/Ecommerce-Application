@@ -1,10 +1,10 @@
 package com.loctran.store.controllers;
 
+import com.loctran.store.dtos.CreateUserRequest;
+import com.loctran.store.dtos.UpdateUserRequest;
 import com.loctran.store.dtos.UserDTO;
-import com.loctran.store.entities.User;
 import com.loctran.store.services.UserService;
 import lombok.AllArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -24,7 +24,22 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<UserDTO> getUserById(@PathVariable("id") Long id) {
+    public UserDTO getUserById(@PathVariable("id") Long id) {
         return userService.findUserById(id);
+    }
+
+    @PostMapping
+    public UserDTO createUser(@RequestBody CreateUserRequest userCreateRequest) {
+        return userService.createUser(userCreateRequest);
+    }
+
+    @PutMapping("/{id}")
+    public UserDTO updateUser(@PathVariable("id")  Long id, @RequestBody UpdateUserRequest updateUserRequest) {
+        return userService.updateUser(id, updateUserRequest);
+    }
+
+    @DeleteMapping("/{id}")
+    public void deleteUser(@PathVariable("id")  Long id) {
+        userService.deleteUser(id);
     }
 }

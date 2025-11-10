@@ -19,7 +19,7 @@ public class ProductController {
     private final ProductMapper productMapper;
     private final ProductService productService;
 
-    @GetMapping("")
+    @GetMapping
     public List<ProductDTO> getAllProducts(
             @RequestParam(name = "categoryId", required = false) Byte categoryId
     ) {
@@ -27,7 +27,22 @@ public class ProductController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ProductDTO> getProductById(@PathVariable Long id) {
+    public ProductDTO getProductById(@PathVariable Long id) {
         return productService.findProductById(id);
+    }
+
+    @PostMapping
+    public ProductDTO createProduct(@RequestBody ProductDTO productDTO) {
+        return productService.createProduct(productDTO);
+    }
+
+    @PutMapping("/{id}")
+    public ProductDTO updateProduct(@PathVariable Long id, @RequestBody ProductDTO productDTO) {
+        return productService.updateProduct(id, productDTO);
+    }
+
+    @DeleteMapping("/{id}")
+    public void  deleteProduct(@PathVariable Long id) {
+        productService.deleteProduct(id);
     }
 }

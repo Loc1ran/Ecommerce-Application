@@ -1,12 +1,14 @@
 package com.loctran.store.services;
 
+import com.loctran.store.dtos.CreateUserRequest;
+import com.loctran.store.dtos.UpdateUserRequest;
 import com.loctran.store.dtos.UserDTO;
+import com.loctran.store.entities.User;
+import com.loctran.store.exceptions.ResourceNotFoundException;
 import com.loctran.store.mappers.UserMapper;
 import com.loctran.store.repositories.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Sort;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -26,14 +28,42 @@ public class UserService {
         return userRepository.findAll(Sort.by(sortedBy)).stream().map(userMapper::userToUserDTO).toList();
     }
 
-    public ResponseEntity<UserDTO> findUserById(Long id) {
-        var user = userRepository.findById(id).orElse(null);
+    public UserDTO findUserById(Long id) {
+        User user = findUserEntityById(id);
 
-        if (user == null) {
-            return ResponseEntity.notFound().build();
-        }
+        return userMapper.userToUserDTO(user);
+    }
 
-        return ResponseEntity.ok(userMapper.userToUserDTO(user));
+    public UserDTO createUser(CreateUserRequest userCreateRequest) {
+        User user = userMapper.toEntity(userCreateRequest);
+
+        userRepository.save(user);
+
+        UserDTO userDTO = userMapper.userToUserDTO(user);
+        userDTO.setId(user.getId());
+
+        return userDTO;
+    }
+
+    public UserDTO updateUser(Long id, UpdateUserRequest updateUserRequest) {
+        User user = findUserEntityById(id);
+
+        userMapper.updateUser(updateUserRequest, user);
+
+        UserDTO userDTO = userMapper.userToUserDTO(user);
+        userDTO.setId(id);
+
+        return userDTO;
+    }
+
+    public void deleteUser(Long id) {
+        User user = findUserEntityById(id);
+
+        userRepository.delete(user);
+    }
+
+    private User findUserEntityById(Long id) {
+        return userRepository.findById(id).orElseThrow(()->  new ResourceNotFoundException("No user found with id " + id));
     }
 
 }
