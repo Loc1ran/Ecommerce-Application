@@ -1,6 +1,7 @@
 package com.loctran.store.controllers;
 
 import com.loctran.store.dtos.CreateUserRequest;
+import com.loctran.store.dtos.UpdatePasswordRequest;
 import com.loctran.store.dtos.UpdateUserRequest;
 import com.loctran.store.dtos.UserDTO;
 import com.loctran.store.services.UserService;
@@ -41,5 +42,10 @@ public class UserController {
     @DeleteMapping("/{id}")
     public void deleteUser(@PathVariable("id")  Long id) {
         userService.deleteUser(id);
+    }
+
+    @PostMapping("/{id}")
+    public void updatePassword(@PathVariable("id") Long id, @RequestBody UpdatePasswordRequest updatePasswordRequest) {
+        userService.updatePassword(id, updatePasswordRequest);
     }
 }

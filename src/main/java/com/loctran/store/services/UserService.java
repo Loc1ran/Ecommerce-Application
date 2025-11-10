@@ -1,6 +1,7 @@
 package com.loctran.store.services;
 
 import com.loctran.store.dtos.CreateUserRequest;
+import com.loctran.store.dtos.UpdatePasswordRequest;
 import com.loctran.store.dtos.UpdateUserRequest;
 import com.loctran.store.dtos.UserDTO;
 import com.loctran.store.entities.User;
@@ -66,4 +67,15 @@ public class UserService {
         return userRepository.findById(id).orElseThrow(()->  new ResourceNotFoundException("No user found with id " + id));
     }
 
+    public void updatePassword(Long id, UpdatePasswordRequest updatePasswordRequest) {
+        User user = findUserEntityById(id);
+
+        if(!user.getPassword().equals(updatePasswordRequest.getOldPassword())) {
+            throw new IllegalArgumentException("Old password doesn't match");
+        }
+
+        user.setPassword(updatePasswordRequest.getNewPassword());
+
+        userRepository.save(user);
+    }
 }
