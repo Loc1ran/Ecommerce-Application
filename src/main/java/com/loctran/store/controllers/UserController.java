@@ -5,7 +5,9 @@ import com.loctran.store.dtos.UpdatePasswordRequest;
 import com.loctran.store.dtos.UpdateUserRequest;
 import com.loctran.store.dtos.UserDTO;
 import com.loctran.store.services.UserService;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -25,27 +27,37 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    public UserDTO getUserById(@PathVariable("id") Long id) {
-        return userService.findUserById(id);
+    public ResponseEntity<?> getUserById(@PathVariable("id") Long id) {
+        UserDTO userDTO = userService.findUserById(id);
+
+        return ResponseEntity.ok(userDTO);
     }
 
     @PostMapping
-    public UserDTO createUser(@RequestBody CreateUserRequest userCreateRequest) {
-        return userService.createUser(userCreateRequest);
+    public ResponseEntity<?> createUser(@Valid @RequestBody CreateUserRequest userCreateRequest) {
+        UserDTO userDTO = userService.createUser(userCreateRequest);
+
+        return ResponseEntity.ok(userDTO);
     }
 
     @PutMapping("/{id}")
-    public UserDTO updateUser(@PathVariable("id")  Long id, @RequestBody UpdateUserRequest updateUserRequest) {
-        return userService.updateUser(id, updateUserRequest);
+    public ResponseEntity<?> updateUser(@PathVariable("id")  Long id, @RequestBody UpdateUserRequest updateUserRequest) {
+        UserDTO userDTO = userService.updateUser(id, updateUserRequest);
+
+        return ResponseEntity.ok(userDTO);
     }
 
     @DeleteMapping("/{id}")
-    public void deleteUser(@PathVariable("id")  Long id) {
+    public ResponseEntity<Void> deleteUser(@PathVariable("id")  Long id) {
         userService.deleteUser(id);
+
+        return ResponseEntity.noContent().build();
     }
 
     @PostMapping("/{id}")
-    public void updatePassword(@PathVariable("id") Long id, @RequestBody UpdatePasswordRequest updatePasswordRequest) {
+    public ResponseEntity<Void> updatePassword(@PathVariable("id") Long id, @RequestBody UpdatePasswordRequest updatePasswordRequest) {
         userService.updatePassword(id, updatePasswordRequest);
+
+        return ResponseEntity.noContent().build();
     }
 }

@@ -5,6 +5,7 @@ import com.loctran.store.dtos.UpdatePasswordRequest;
 import com.loctran.store.dtos.UpdateUserRequest;
 import com.loctran.store.dtos.UserDTO;
 import com.loctran.store.entities.User;
+import com.loctran.store.exceptions.BadRequestException;
 import com.loctran.store.exceptions.ResourceNotFoundException;
 import com.loctran.store.mappers.UserMapper;
 import com.loctran.store.repositories.UserRepository;
@@ -36,6 +37,10 @@ public class UserService {
     }
 
     public UserDTO createUser(CreateUserRequest userCreateRequest) {
+        if(userRepository.existsByEmail(userCreateRequest.getEmail())) {
+            throw new BadRequestException("Email already exists");
+        }
+
         User user = userMapper.toEntity(userCreateRequest);
 
         userRepository.save(user);

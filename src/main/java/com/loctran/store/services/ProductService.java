@@ -5,14 +5,10 @@ import com.loctran.store.entities.Category;
 import com.loctran.store.entities.Product;
 import com.loctran.store.exceptions.ResourceNotFoundException;
 import com.loctran.store.mappers.ProductMapper;
-import com.loctran.store.repositories.CategoryRepository;
 import com.loctran.store.repositories.ProductRepository;
 import lombok.AllArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service

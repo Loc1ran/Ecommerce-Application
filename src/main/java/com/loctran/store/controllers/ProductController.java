@@ -15,8 +15,6 @@ import java.util.List;
 @AllArgsConstructor
 public class ProductController {
 
-    private final ProductRepository productRepository;
-    private final ProductMapper productMapper;
     private final ProductService productService;
 
     @GetMapping
@@ -27,22 +25,28 @@ public class ProductController {
     }
 
     @GetMapping("/{id}")
-    public ProductDTO getProductById(@PathVariable Long id) {
-        return productService.findProductById(id);
+    public ResponseEntity<?> getProductById(@PathVariable Long id) {
+        ProductDTO productDTO = productService.findProductById(id);
+
+        return ResponseEntity.ok(productDTO);
     }
 
     @PostMapping
-    public ProductDTO createProduct(@RequestBody ProductDTO productDTO) {
-        return productService.createProduct(productDTO);
+    public ResponseEntity<?> createProduct(@RequestBody ProductDTO productDTO) {
+        ProductDTO result = productService.createProduct(productDTO);
+
+        return  ResponseEntity.ok(result);
     }
 
     @PutMapping("/{id}")
-    public ProductDTO updateProduct(@PathVariable Long id, @RequestBody ProductDTO productDTO) {
-        return productService.updateProduct(id, productDTO);
+    public ResponseEntity<?> updateProduct(@PathVariable Long id, @RequestBody ProductDTO productDTO) {
+        ProductDTO updatedProductDTO = productService.updateProduct(id, productDTO);
+
+        return ResponseEntity.ok(updatedProductDTO);
     }
 
     @DeleteMapping("/{id}")
-    public void  deleteProduct(@PathVariable Long id) {
+    public void deleteProduct(@PathVariable Long id) {
         productService.deleteProduct(id);
     }
 }
