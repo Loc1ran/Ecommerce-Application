@@ -28,7 +28,7 @@ public class CartService {
     }
 
     public Cart getCartEntityById(UUID id) {
-        return cartRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Item with id " + id + " not found"));
+        return cartRepository.getCartWithItems(id).orElseThrow(() -> new ResourceNotFoundException("Item with id " + id + " not found"));
     }
 
     public CartDTO createCart() {

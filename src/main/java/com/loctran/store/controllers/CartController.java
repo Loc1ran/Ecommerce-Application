@@ -16,9 +16,9 @@ import java.util.UUID;
 public class CartController {
     private CartService cartService;
 
-    @GetMapping
-    public ResponseEntity<CartDTO> getCartById(UUID id) {
-        CartDTO cartDTO = cartService.getCartById(id);
+    @GetMapping("/{cartId}")
+    public ResponseEntity<CartDTO> getCartById(@PathVariable UUID cartId) {
+        CartDTO cartDTO = cartService.getCartById(cartId);
 
         return ResponseEntity.ok(cartDTO);
     }
