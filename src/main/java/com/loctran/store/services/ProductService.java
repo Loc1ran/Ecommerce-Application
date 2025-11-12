@@ -66,7 +66,7 @@ public class ProductService {
         productRepository.delete(product);
     }
 
-    private Product findProductEntityById(Long id) {
+    public Product findProductEntityById(Long id) {
         return productRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("No product found with id " + id));
     }
 }
