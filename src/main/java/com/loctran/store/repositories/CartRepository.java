@@ -1,7 +1,6 @@
 package com.loctran.store.repositories;
 
 import com.loctran.store.entities.Cart;
-import jakarta.persistence.Entity;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;

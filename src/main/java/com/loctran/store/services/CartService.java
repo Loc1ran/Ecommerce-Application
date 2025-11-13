@@ -43,23 +43,46 @@ public class CartService {
         Cart cart = getCartEntityById(id);
         Product product = productService.findProductEntityById(createItemToCartRequest.getProductId());
 
-        CartItem updatedCartItem = cart.getCartItems().stream().filter(
-                item -> item.getProduct().getId().equals(product.getId())
-        ).findFirst().map(
-                item -> {
-                    item.setQuantity(item.getQuantity() + 1);
-                    return item;
-                }).orElseGet(() -> {
-                CartItem cartItem = new CartItem();
-                cartItem.setProduct(product);
-                cartItem.setQuantity(1);
-                cartItem.setCart(cart);
-                cart.getCartItems().add(cartItem);
-                return cartItem;
-            });
+        CartItem cartItem = cart.getCarItemByProductId(product.getId());
+
+        if( cartItem == null ) {
+            CartItem newCartItem = new CartItem();
+            newCartItem.setProduct(product);
+            newCartItem.setQuantity(1);
+            cart.getCartItems().add(newCartItem);
+        } else{
+            cartItem.setQuantity(cartItem.getQuantity() + 1);
+        }
 
         cartRepository.save(cart);
 
-        return cartMapper.CartItemToCartItemDTO(updatedCartItem);
+        return cartMapper.CartItemToCartItemDTO(cartItem);
+    }
+
+    public CartItemDTO updateCart(UUID cartId, Long productId, Integer quantity){
+        Cart cart = getCartEntityById(cartId);
+
+        CartItem cartItem = cart.getCarItemByProductId(productId);
+
+        if(cartItem == null){
+            throw new ResourceNotFoundException("Item with productId " + productId + " not found");
+        }
+
+        return cartMapper.CartItemToCartItemDTO(cartItem);
+    }
+
+    public void deleteCartItem(UUID cartId, Long productId) {
+        Cart cart = getCartEntityById(cartId);
+
+        cart.removeCartItem(productId);
+
+        cartRepository.save(cart);
+    }
+
+
+    public void deleteCartItem(UUID cartId) {
+        Cart cart = getCartEntityById(cartId);
+
+        cart.clear();
     }
 }
