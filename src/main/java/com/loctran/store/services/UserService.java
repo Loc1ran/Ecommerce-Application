@@ -11,6 +11,7 @@ import com.loctran.store.mappers.UserMapper;
 import com.loctran.store.repositories.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -22,6 +23,7 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final UserMapper userMapper;
+    private final PasswordEncoder passwordEncoder;
 
     public List<UserDTO> getAllUsers(String sortedBy) {
         if(!Set.of("name", "email").contains(sortedBy)) {
@@ -42,7 +44,7 @@ public class UserService {
         }
 
         User user = userMapper.toEntity(userCreateRequest);
-
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
         userRepository.save(user);
 
         UserDTO userDTO = userMapper.userToUserDTO(user);
