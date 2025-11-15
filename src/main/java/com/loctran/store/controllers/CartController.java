@@ -2,6 +2,7 @@ package com.loctran.store.controllers;
 
 import com.loctran.store.dtos.*;
 import com.loctran.store.services.CartService;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -31,7 +32,7 @@ public class CartController {
     @PostMapping("/{cartId}/items")
     public ResponseEntity<CartItemDTO> addToCart(
             @PathVariable UUID cartId,
-            @RequestBody CreateItemToCartRequest createItemToCartRequest) {
+            @Valid @RequestBody CreateItemToCartRequest createItemToCartRequest) {
         CartItemDTO cartItemDTO = cartService.addToCart(cartId, createItemToCartRequest);
 
         return ResponseEntity.ok(cartItemDTO);
@@ -41,7 +42,7 @@ public class CartController {
     public ResponseEntity<CartItemDTO> updateCart(
             @PathVariable UUID cartId,
             @PathVariable Long productId,
-            @RequestBody UpdateCartItemQuantity quantity) {
+            @Valid @RequestBody UpdateCartItemQuantity quantity) {
         CartItemDTO cartItemDTO = cartService.updateCart(cartId, productId, quantity.getQuantity());
 
         return ResponseEntity.ok(cartItemDTO);
