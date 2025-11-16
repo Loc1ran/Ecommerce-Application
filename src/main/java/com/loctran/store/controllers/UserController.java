@@ -8,6 +8,8 @@ import com.loctran.store.services.UserService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,10 +21,15 @@ public class UserController {
 
     private final UserService userService;
 
-    @GetMapping("")
+    @GetMapping
     public List<UserDTO> getAllUsers(
             @RequestParam(required = false, defaultValue = "", name = "sort") String sortBy
     ) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        System.out.println("Authentication: " + auth);
+        System.out.println("Is authenticated: " + auth.isAuthenticated());
+        System.out.println("Authorities: " + auth.getAuthorities());
+
         return userService.getAllUsers(sortBy);
     }
 

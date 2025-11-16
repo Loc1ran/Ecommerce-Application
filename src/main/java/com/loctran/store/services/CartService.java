@@ -68,6 +68,10 @@ public class CartService {
             throw new ResourceNotFoundException("Item with productId " + productId + " not found");
         }
 
+        cartItem.setQuantity(quantity);
+
+        cartRepository.save(cart);
+
         return cartMapper.CartItemToCartItemDTO(cartItem);
     }
 

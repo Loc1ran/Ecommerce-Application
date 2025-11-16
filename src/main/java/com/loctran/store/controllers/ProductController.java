@@ -1,8 +1,6 @@
 package com.loctran.store.controllers;
 
 import com.loctran.store.dtos.ProductDTO;
-import com.loctran.store.mappers.ProductMapper;
-import com.loctran.store.repositories.ProductRepository;
 import com.loctran.store.services.ProductService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
