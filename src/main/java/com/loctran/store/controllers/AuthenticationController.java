@@ -3,6 +3,7 @@ package com.loctran.store.controllers;
 import com.loctran.store.dtos.AuthenticationRequest;
 import com.loctran.store.dtos.AuthenticationResponse;
 import com.loctran.store.services.AuthenticationServices;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpHeaders;
@@ -18,10 +19,21 @@ public class AuthenticationController {
     private AuthenticationServices authenticationServices;
 
     @PostMapping("/login")
-    public ResponseEntity<AuthenticationResponse> login(@Valid @RequestBody AuthenticationRequest request){
-        AuthenticationResponse response = authenticationServices.login(request);
+    public ResponseEntity<AuthenticationResponse> login(
+            @Valid @RequestBody AuthenticationRequest request,
+            HttpServletResponse response){
+        AuthenticationResponse authResponse = authenticationServices.login(request, response);
 
-        return ResponseEntity.ok().header(HttpHeaders.AUTHORIZATION, response.getJwtToken()).body(response);
+        return ResponseEntity.ok().header(HttpHeaders.AUTHORIZATION, authResponse.getJwtToken()).body(authResponse);
+    }
+
+    @PostMapping("/refresh")
+    public ResponseEntity<AuthenticationResponse> refresh(
+            @CookieValue(value = "refreshToken") String refreshToken
+    ){
+        AuthenticationResponse authResponse = authenticationServices.refresh(refreshToken);
+
+        return ResponseEntity.ok().body(authResponse);
     }
 
     @ExceptionHandler(BadCredentialsException.class)

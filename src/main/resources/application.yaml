@@ -17,3 +17,5 @@ spring:
 
   jwt:
     secret: ${JWT_SECRET}
+    accessTokenExpiration: 300
+    refreshTokenExpiration: 604800

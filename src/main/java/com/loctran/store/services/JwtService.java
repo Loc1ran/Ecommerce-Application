@@ -1,8 +1,10 @@
 package com.loctran.store.services;
 
+import com.loctran.store.config.JwtConfig;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -13,29 +15,32 @@ import java.util.Date;
 import java.util.Map;
 
 @Service
+@AllArgsConstructor
 public class JwtService {
-    @Value("${spring.jwt.secret}")
-    private String secretKey;
+    private final JwtConfig jwtConfig;
 
-    public String issueToken(Long id) {
-        return issueToken(id, null);
+    public String generateToken(Long id, Map<String, Object> claims) {
+        return generateToken(id, claims, jwtConfig.getAccessTokenExpiration());
     }
 
-    public String issueToken(Long id, Map<String, Object> claims) {
-        return
-                Jwts.builder()
-                        .claims()
-                        .add(claims)
-                        .subject(id.toString())
-                        .issuedAt(Date.from(Instant.now()))
-                        .expiration(Date.from(Instant.now().plus(1, ChronoUnit.DAYS)))
-                        .and()
-                        .signWith(getSecretKey())
-                        .compact();
+    public String generateRefreshToken(Long id, Map<String, Object> claims) {
+        return generateToken(id, claims, jwtConfig.getRefreshTokenExpiration());
+    }
+
+    private String generateToken(Long id, Map<String, Object> claims, long expirationDate) {
+        return Jwts.builder()
+                .claims()
+                .add(claims)
+                .subject(id.toString())
+                .issuedAt(new Date())
+                .expiration(new Date(System.currentTimeMillis() + expirationDate * 1000L))
+                .and()
+                .signWith(getSecretKey())
+                .compact();
     }
 
     public SecretKey getSecretKey() {
-        return Keys.hmacShaKeyFor(secretKey.getBytes());
+        return Keys.hmacShaKeyFor(jwtConfig.getSecret().getBytes());
     }
 
     public Claims getClaimsFromToken(String token) {
@@ -60,7 +65,7 @@ public class JwtService {
         return subject.equals(id) && !isTokenExpired(token);
     }
 
-    public boolean isTokenExpired(String token) {
+    private boolean isTokenExpired(String token) {
         return getClaimsFromToken(token).getExpiration().before(Date.from(Instant.now()));
     }
 }
