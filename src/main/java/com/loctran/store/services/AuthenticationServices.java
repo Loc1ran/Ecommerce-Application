@@ -65,6 +65,7 @@ public class AuthenticationServices {
         Map<String, Object> claims = new HashMap<>();
         claims.put("email", user.getEmail());
         claims.put("name", user.getName());
+        claims.put("role", user.getRole());
 
         return claims;
     }

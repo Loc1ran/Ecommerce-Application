@@ -1,6 +1,7 @@
 package com.loctran.store.services;
 
 import com.loctran.store.config.JwtConfig;
+import com.loctran.store.entities.Role;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
@@ -58,6 +59,10 @@ public class JwtService {
 
     public String getEmailFromToken(String token) {
         return getClaimsFromToken(token).get("email").toString();
+    }
+
+    public Role getRoleFromToken(String token){
+        return Role.valueOf(getClaimsFromToken(token).get("role").toString());
     }
 
     public boolean isTokenValid(String token, Long id) {

@@ -4,6 +4,7 @@ import com.loctran.store.dtos.CreateUserRequest;
 import com.loctran.store.dtos.UpdatePasswordRequest;
 import com.loctran.store.dtos.UpdateUserRequest;
 import com.loctran.store.dtos.UserDTO;
+import com.loctran.store.entities.Role;
 import com.loctran.store.entities.User;
 import com.loctran.store.exceptions.BadRequestException;
 import com.loctran.store.exceptions.ResourceNotFoundException;
@@ -45,6 +46,7 @@ public class UserService {
 
         User user = userMapper.toEntity(userCreateRequest);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
+        user.setRole(Role.USER);
         userRepository.save(user);
 
         UserDTO userDTO = userMapper.userToUserDTO(user);

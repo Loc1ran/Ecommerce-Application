@@ -1,5 +1,6 @@
 package com.loctran.store.config;
 
+import com.loctran.store.entities.Role;
 import com.loctran.store.filters.JwtAuthenticationFilter;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -55,14 +56,20 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests( c -> c
                         .requestMatchers("/api/v1/carts/**").permitAll()
+                        .requestMatchers("/api/v1/admin/**").hasRole(Role.ADMIN.name())
                         .requestMatchers(HttpMethod.POST, "/api/v1/users", "/api/v1/auth/login", "/api/v1/auth/refresh")
                         .permitAll()
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
-                .exceptionHandling( c ->
-                        c.authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED))
-                );
+                .exceptionHandling( c -> {
+                    c.authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED));
+                    c.accessDeniedHandler(
+                            (request, response, accessDeniedException) ->
+                            response.sendError(HttpStatus.UNAUTHORIZED.value(), accessDeniedException.getMessage())
+                    );
+
+                });
 
         return http.build();
     }
