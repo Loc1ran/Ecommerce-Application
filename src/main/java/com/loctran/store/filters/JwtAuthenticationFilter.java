@@ -1,5 +1,6 @@
 package com.loctran.store.filters;
 
+import com.loctran.store.entities.Jwt;
 import com.loctran.store.entities.Role;
 import com.loctran.store.services.JwtService;
 import com.loctran.store.services.UserUserDetailsService;
@@ -7,6 +8,7 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.AllArgsConstructor;
 import lombok.NonNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -19,16 +21,12 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 import java.util.List;
 
+@AllArgsConstructor
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtService jwtService;
     private final UserUserDetailsService userUserDetailsService;
-
-    public JwtAuthenticationFilter(JwtService jwtService, UserUserDetailsService userUserDetailsService) {
-        this.jwtService = jwtService;
-        this.userUserDetailsService = userUserDetailsService;
-    }
 
     @Override
     protected void doFilterInternal(@NonNull HttpServletRequest request,
@@ -40,15 +38,22 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             return;
         }
 
-        String jwt = authHeader.substring(7);
-        Long userId = jwtService.getUserIdFromToken(jwt);
-        String email = jwtService.getEmailFromToken(jwt);
-        Role role =  jwtService.getRoleFromToken(jwt);
+        String token = authHeader.substring(7);
+        Jwt jwt = jwtService.parseToken(token);
+
+        if (jwt == null) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
+        Long userId = jwt.getUserIdFromToken();
+        String email = jwt.getEmailFromToken();
+        Role role = jwt.getRoleFromToken();
 
         if ( userId != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             UserDetails userDetails = userUserDetailsService.loadUserByUsername(email);
 
-            if( jwtService.isTokenValid(jwt, userId) ){
+            if( jwt.isTokenValid(userId) ){
                 UsernamePasswordAuthenticationToken authentication =
                         new UsernamePasswordAuthenticationToken
                                 (userDetails, null, List.of(new SimpleGrantedAuthority("ROLE_" + role)));

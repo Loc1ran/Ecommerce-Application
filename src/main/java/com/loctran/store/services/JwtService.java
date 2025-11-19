@@ -1,6 +1,7 @@
 package com.loctran.store.services;
 
 import com.loctran.store.config.JwtConfig;
+import com.loctran.store.entities.Jwt;
 import com.loctran.store.entities.Role;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -20,57 +21,40 @@ import java.util.Map;
 public class JwtService {
     private final JwtConfig jwtConfig;
 
-    public String generateToken(Long id, Map<String, Object> claims) {
+    public Jwt generateToken(Long id, Map<String, Object> claims) {
         return generateToken(id, claims, jwtConfig.getAccessTokenExpiration());
     }
 
-    public String generateRefreshToken(Long id, Map<String, Object> claims) {
+    public Jwt generateRefreshToken(Long id, Map<String, Object> claims) {
         return generateToken(id, claims, jwtConfig.getRefreshTokenExpiration());
     }
 
-    private String generateToken(Long id, Map<String, Object> claims, long expirationDate) {
-        return Jwts.builder()
-                .claims()
+    private Jwt generateToken(Long id, Map<String, Object> claims, long expirationDate) {
+        Claims claim = Jwts.claims()
                 .add(claims)
                 .subject(id.toString())
                 .issuedAt(new Date())
                 .expiration(new Date(System.currentTimeMillis() + expirationDate * 1000L))
-                .and()
-                .signWith(getSecretKey())
-                .compact();
+                .build();
+
+        return new Jwt(claim, jwtConfig.getSecretKey());
     }
 
-    public SecretKey getSecretKey() {
-        return Keys.hmacShaKeyFor(jwtConfig.getSecret().getBytes());
+    public Jwt parseToken(String token) {
+        try {
+            var claims = getClaimsFromToken(token);
+            return new Jwt(claims, jwtConfig.getSecretKey());
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     public Claims getClaimsFromToken(String token) {
         return Jwts
                 .parser()
-                .verifyWith(getSecretKey())
+                .verifyWith(jwtConfig.getSecretKey())
                 .build()
                 .parseSignedClaims(token)
                 .getPayload();
-    }
-
-    public Long getUserIdFromToken(String token) {
-        return Long.valueOf(getClaimsFromToken(token).getSubject());
-    }
-
-    public String getEmailFromToken(String token) {
-        return getClaimsFromToken(token).get("email").toString();
-    }
-
-    public Role getRoleFromToken(String token){
-        return Role.valueOf(getClaimsFromToken(token).get("role").toString());
-    }
-
-    public boolean isTokenValid(String token, Long id) {
-        Long subject = Long.valueOf(getClaimsFromToken(token).getSubject());
-        return subject.equals(id) && !isTokenExpired(token);
-    }
-
-    private boolean isTokenExpired(String token) {
-        return getClaimsFromToken(token).getExpiration().before(Date.from(Instant.now()));
     }
 }

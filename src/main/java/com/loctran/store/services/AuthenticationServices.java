@@ -2,6 +2,7 @@ package com.loctran.store.services;
 
 import com.loctran.store.dtos.AuthenticationRequest;
 import com.loctran.store.dtos.AuthenticationResponse;
+import com.loctran.store.entities.Jwt;
 import com.loctran.store.entities.User;
 import com.loctran.store.exceptions.UnauthorizedException;
 import com.loctran.store.repositories.UserRepository;
@@ -33,32 +34,33 @@ public class AuthenticationServices {
         User user = userRepository.findByEmail(authenticationRequest.getEmail()).orElseThrow();
         Map<String, Object> claims = setClaims(user);
 
-        String accessToken = jwtService.generateToken(user.getId(), claims);
-        String refreshToken = jwtService.generateRefreshToken(user.getId(), claims);
+        Jwt accessToken = jwtService.generateToken(user.getId(), claims);
+        Jwt refreshToken = jwtService.generateRefreshToken(user.getId(), claims);
 
-        Cookie cookie = new Cookie("refreshToken", refreshToken);
+        Cookie cookie = new Cookie("refreshToken", refreshToken.toString());
         cookie.setHttpOnly(true);
         cookie.setPath("/api/v1/auth/refresh");
         cookie.setMaxAge(604800);
         cookie.setSecure(true);
         response.addCookie(cookie);
 
-        return new AuthenticationResponse(accessToken);
+        return new AuthenticationResponse(accessToken.toString());
     }
 
     public AuthenticationResponse refresh(String refreshToken) {
-        Long userId = jwtService.getUserIdFromToken(refreshToken);
+        Jwt jwt = jwtService.parseToken(refreshToken);
+        Long userId = jwt.getUserIdFromToken();
 
-        if (userId == null || !jwtService.isTokenValid(refreshToken, userId)) {
+        if (userId == null || !jwt.isTokenValid(userId)) {
             throw new UnauthorizedException("Invalid refresh token");
         }
 
         User user =  userRepository.findById(userId).orElseThrow();
         Map<String, Object> claims = setClaims(user);
 
-        String accessToken = jwtService.generateToken(user.getId(), claims);
+        Jwt accessToken = jwtService.generateToken(user.getId(), claims);
 
-        return  new AuthenticationResponse(accessToken);
+        return new AuthenticationResponse(accessToken.toString());
     }
 
     private Map<String, Object> setClaims(User user) {
