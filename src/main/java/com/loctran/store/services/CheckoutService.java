@@ -2,10 +2,7 @@ package com.loctran.store.services;
 
 import com.loctran.store.dtos.CheckoutRequest;
 import com.loctran.store.dtos.CheckoutResponse;
-import com.loctran.store.entities.Cart;
-import com.loctran.store.entities.Order;
-import com.loctran.store.entities.OrderItem;
-import com.loctran.store.entities.OrderStatus;
+import com.loctran.store.entities.*;
 import com.loctran.store.exceptions.BadRequestException;
 import com.loctran.store.exceptions.ResourceNotFoundException;
 import com.loctran.store.repositories.CartRepository;
@@ -29,24 +26,15 @@ public class CheckoutService {
             throw new BadRequestException("Cart is Empty");
         }
 
-        Order order = new Order();
-        order.setUser(authenticationServices.getUser());
-        order.setTotalPrice(cart.getTotalPrice());
-        order.setStatus(OrderStatus.PENDING);
+        User user = authenticationServices.getUser();
 
-        cart.getCartItems().forEach(item -> {
-            OrderItem orderItem = new OrderItem();
-            orderItem.setProduct(item.getProduct());
-            orderItem.setQuantity(item.getQuantity());
-            orderItem.setTotalPrice(item.getTotalPrice());
-            orderItem.setUnitPrice(item.getProduct().getPrice());
-            orderItem.setOrder(order);
-            order.getOrderItems().add(orderItem);
-        });
+        Order order = Order.fromCart(user, cart);
+
+        Order savedOrder = orderRepository.save(order);
 
         cart.clear();
-        orderRepository.save(order);
+        cartRepository.save(cart);
 
-        return new CheckoutResponse(order.getOrderId());
+        return new CheckoutResponse(savedOrder.getOrderId());
     }
 }

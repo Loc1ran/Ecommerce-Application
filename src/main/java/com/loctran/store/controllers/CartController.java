@@ -51,14 +51,14 @@ public class CartController {
     @DeleteMapping("/{cartId}/items/{productId}")
     public ResponseEntity<Void> deleteCartProduct(
             @PathVariable UUID cartId, @PathVariable Long productId) {
-        cartService.deleteCartItem(cartId, productId);
+        cartService.clearCart(cartId, productId);
         return ResponseEntity.ok().build();
     }
 
     @DeleteMapping("/{cartId}/items")
     public ResponseEntity<Void> deleteCartItem(
             @PathVariable UUID cartId) {
-        cartService.deleteCartItem(cartId);
+        cartService.clearCart(cartId);
 
         return  ResponseEntity.ok().build();
     }

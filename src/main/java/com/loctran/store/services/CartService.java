@@ -46,12 +46,12 @@ public class CartService {
         CartItem cartItem = cart.getCarItemByProductId(product.getId());
 
         if( cartItem == null ) {
-            CartItem newCartItem = new CartItem();
-            newCartItem.setProduct(product);
-            newCartItem.setQuantity(1);
-            cart.getCartItems().add(newCartItem);
+            CartItem newCartItem = new CartItem(
+                    product, 1
+            );
+            cart.addToCart(newCartItem);
         } else{
-            cartItem.setQuantity(cartItem.getQuantity() + 1);
+            cartItem.updateQuantity(cartItem.getQuantity() + 1);
         }
 
         cartRepository.save(cart);
@@ -75,7 +75,7 @@ public class CartService {
         return cartMapper.CartItemToCartItemDTO(cartItem);
     }
 
-    public void deleteCartItem(UUID cartId, Long productId) {
+    public void clearCart(UUID cartId, Long productId) {
         Cart cart = getCartEntityById(cartId);
 
         cart.removeCartItem(productId);
@@ -84,7 +84,7 @@ public class CartService {
     }
 
 
-    public void deleteCartItem(UUID cartId) {
+    public void clearCart(UUID cartId) {
         Cart cart = getCartEntityById(cartId);
 
         cart.clear();

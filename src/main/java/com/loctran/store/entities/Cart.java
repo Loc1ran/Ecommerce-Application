@@ -51,4 +51,8 @@ public class Cart {
     public void clear(){
         cartItems.clear();
     }
+
+    public void addToCart(CartItem item){
+        cartItems.add(item);
+    }
 }

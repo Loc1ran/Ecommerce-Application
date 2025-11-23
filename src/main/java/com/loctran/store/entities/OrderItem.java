@@ -32,4 +32,19 @@ public class OrderItem {
 
     @Column(name = "total_price")
     private BigDecimal totalPrice;
+
+    public OrderItem(Product product, Integer quantity, BigDecimal totalPrice) {
+        this.product = product;
+        this.quantity = quantity;
+        this.totalPrice = totalPrice;
+        this.unitPrice = product.getPrice();
+    }
+
+    public static OrderItem fromCartItem(CartItem item) {
+        return new OrderItem(
+                item.getProduct(),
+                item.getQuantity(),
+                item.getTotalPrice()
+        );
+    }
 }
