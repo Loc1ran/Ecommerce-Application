@@ -2,12 +2,14 @@ package com.loctran.store.entities;
 
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.math.BigDecimal;
 
 @Entity
 @Getter
+@NoArgsConstructor
 @Setter
 @Table(name = "order_items ")
 public class OrderItem {
