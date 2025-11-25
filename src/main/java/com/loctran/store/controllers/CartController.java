@@ -31,7 +31,7 @@ public class CartController {
 
     @PostMapping("/{cartId}/items")
     public ResponseEntity<CartItemDTO> addToCart(
-            @PathVariable UUID cartId,
+            @PathVariable("cartId") UUID cartId,
             @Valid @RequestBody CreateItemToCartRequest createItemToCartRequest) {
         CartItemDTO cartItemDTO = cartService.addToCart(cartId, createItemToCartRequest);
 
@@ -40,8 +40,8 @@ public class CartController {
 
     @PutMapping("/{cartId}/items/{productId}")
     public ResponseEntity<CartItemDTO> updateCart(
-            @PathVariable UUID cartId,
-            @PathVariable Long productId,
+            @PathVariable("cartId") UUID cartId,
+            @PathVariable("productId") Long productId,
             @Valid @RequestBody UpdateCartItemQuantity quantity) {
         CartItemDTO cartItemDTO = cartService.updateCart(cartId, productId, quantity.getQuantity());
 
@@ -50,14 +50,14 @@ public class CartController {
 
     @DeleteMapping("/{cartId}/items/{productId}")
     public ResponseEntity<Void> deleteCartProduct(
-            @PathVariable UUID cartId, @PathVariable Long productId) {
+            @PathVariable("productId") UUID cartId, @PathVariable Long productId) {
         cartService.clearCart(cartId, productId);
         return ResponseEntity.ok().build();
     }
 
     @DeleteMapping("/{cartId}/items")
     public ResponseEntity<Void> deleteCartItem(
-            @PathVariable UUID cartId) {
+            @PathVariable("cartId") UUID cartId) {
         cartService.clearCart(cartId);
 
         return  ResponseEntity.ok().build();

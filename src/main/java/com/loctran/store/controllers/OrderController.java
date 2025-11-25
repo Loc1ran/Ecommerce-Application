@@ -1,9 +1,10 @@
 package com.loctran.store.controllers;
 
-import com.loctran.store.dtos.OrderResponse;
+import com.loctran.store.dtos.OrderDTO;
 import com.loctran.store.services.OrderService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -20,9 +21,15 @@ public class OrderController {
     }
 
     @GetMapping
-    public ResponseEntity<List<OrderResponse>> getAllOrders(){
-        List<OrderResponse> responses = orderService.getOrders();
+    public ResponseEntity<List<OrderDTO>> getAllOrders(){
+        List<OrderDTO> responses = orderService.getOrders();
 
         return ResponseEntity.ok(responses);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<OrderDTO> getOrderById(
+            @PathVariable("id") Long id){
+        return ResponseEntity.ok(orderService.getOrderById(id));
     }
 }

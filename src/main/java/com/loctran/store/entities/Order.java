@@ -62,4 +62,8 @@ public class Order {
         this.orderItems.add(orderItem);
         orderItem.setOrder(this);
     }
+
+    public boolean verifyUserOrder(User customer) {
+        return this.user.equals(customer);
+    }
 }
