@@ -7,17 +7,26 @@ import com.loctran.store.exceptions.BadRequestException;
 import com.loctran.store.exceptions.ResourceNotFoundException;
 import com.loctran.store.repositories.CartRepository;
 import com.loctran.store.repositories.OrderRepository;
-import lombok.AllArgsConstructor;
+import com.stripe.exception.StripeException;
+import com.stripe.model.checkout.Session;
+import com.stripe.param.checkout.SessionCreateParams;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class CheckoutService {
     private final CartRepository cartRepository;
     private final AuthenticationServices authenticationServices;
     private final OrderRepository orderRepository;
 
-    public CheckoutResponse checkout(CheckoutRequest checkoutRequest) {
+    @Value("${websiteUrl}")
+    private String websiteUrl;
+
+    @Transactional
+    public CheckoutResponse checkout(CheckoutRequest checkoutRequest) throws StripeException {
         Cart cart = cartRepository.getCartWithItems(checkoutRequest.getCartId()).orElseThrow(
                 () -> new ResourceNotFoundException("Cart with id " + checkoutRequest.getCartId() + " not found")
         );
@@ -32,9 +41,36 @@ public class CheckoutService {
 
         Order savedOrder = orderRepository.save(order);
 
-        cart.clear();
-        cartRepository.save(cart);
+        var builder = SessionCreateParams.builder()
+                .setMode(SessionCreateParams.Mode.PAYMENT)
+                .setSuccessUrl(websiteUrl + "/checkout-success?orderId=" + order.getOrderId())
+                .setCancelUrl(websiteUrl + "/checkout-cancel");
 
-        return new CheckoutResponse(savedOrder.getOrderId());
+        order.getOrderItems().forEach(item -> {
+            var lineItem = SessionCreateParams.LineItem.builder()
+                    .setQuantity(Long.valueOf(item.getQuantity()))
+                    .setPriceData(
+                            SessionCreateParams.LineItem.PriceData.builder()
+                                    .setCurrency("usd")
+                                    .setUnitAmountDecimal(item.getUnitPrice())
+                                    .setProductData(
+                                            SessionCreateParams.LineItem.PriceData.ProductData.builder()
+                                                    .setName(item.getProduct().getName()).build()
+                                    ).build()
+                    ).build();
+            builder.addLineItem(lineItem);
+        });
+
+        try {
+            Session session = Session.create(builder.build());
+
+            cart.clear();
+            cartRepository.save(cart);
+
+            return new CheckoutResponse(savedOrder.getOrderId(), session.getUrl());
+        } catch (StripeException e){
+            orderRepository.delete(savedOrder);
+            throw e;
+        }
     }
 }

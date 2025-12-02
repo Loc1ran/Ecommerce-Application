@@ -35,7 +35,7 @@ public class Order {
     @Column(name = "total_price")
     private BigDecimal totalPrice;
 
-    @OneToMany(mappedBy = "order", cascade =  CascadeType.PERSIST)
+    @OneToMany(mappedBy = "order", cascade =  {CascadeType.PERSIST, CascadeType.REMOVE})
     private Set<OrderItem> orderItems = new HashSet<>();
 
     public Order(User user, BigDecimal totalPrice, OrderStatus orderStatus) {

@@ -3,7 +3,9 @@ package com.loctran.store.controllers;
 import com.loctran.store.dtos.CheckoutRequest;
 import com.loctran.store.dtos.CheckoutResponse;
 import com.loctran.store.services.CheckoutService;
+import com.stripe.exception.StripeException;
 import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -22,8 +24,13 @@ public class CheckoutController {
     @PostMapping
     public ResponseEntity<?> checkout(
             @Valid @RequestBody CheckoutRequest checkoutRequest) {
-        CheckoutResponse response = checkoutService.checkout(checkoutRequest);
-
-        return ResponseEntity.ok().body(response);
+        try {
+            CheckoutResponse response = checkoutService.checkout(checkoutRequest);
+            return ResponseEntity.ok().body(response);
+        } catch (StripeException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
+                    "Error creating a checkout session"
+            );
+        }
     }
 }
