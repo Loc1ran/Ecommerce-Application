@@ -75,10 +75,10 @@ public class CartService {
         return cartMapper.CartItemToCartItemDTO(cartItem);
     }
 
-    public void clearCart(UUID cartId, Long productId) {
+    public void clearCartItem(UUID cartId, Long productId) {
         Cart cart = getCartEntityById(cartId);
 
-        cart.removeCartItem(productId);
+        cart.clearCartItem(productId);
 
         cartRepository.save(cart);
     }

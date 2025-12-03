@@ -49,18 +49,19 @@ public class CartController {
     }
 
     @DeleteMapping("/{cartId}/items/{productId}")
-    public ResponseEntity<Void> deleteCartProduct(
-            @PathVariable("productId") UUID cartId, @PathVariable Long productId) {
-        cartService.clearCart(cartId, productId);
+    public ResponseEntity<Void> clearCartItem(
+            @PathVariable("cartId") UUID cartId,
+            @PathVariable("productId") Long productId) {
+        cartService.clearCartItem(cartId, productId);
         return ResponseEntity.ok().build();
     }
 
     @DeleteMapping("/{cartId}/items")
-    public ResponseEntity<Void> deleteCartItem(
+    public ResponseEntity<Void> clearCart(
             @PathVariable("cartId") UUID cartId) {
         cartService.clearCart(cartId);
 
-        return  ResponseEntity.ok().build();
+        return ResponseEntity.ok().build();
     }
 
 

@@ -39,7 +39,7 @@ public class Cart {
         ).findFirst().orElse(null);
     }
 
-    public void removeCartItem(Long productId){
+    public void clearCartItem(Long productId){
         CartItem cartItem = getCarItemByProductId(productId);
 
         if(cartItem != null){
