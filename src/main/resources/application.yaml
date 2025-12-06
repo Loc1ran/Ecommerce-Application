@@ -22,5 +22,6 @@ spring:
 
 stripe:
   secretKey: ${STRIPE_SECRET_KEY}
+  webhookSecretKey: ${STRIPE_WEBHOOK_SECRET_KEY}
 
 websiteUrl: http://localhost:3000
