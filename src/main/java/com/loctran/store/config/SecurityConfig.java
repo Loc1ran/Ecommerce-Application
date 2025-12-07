@@ -57,7 +57,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests( c -> c
                         .requestMatchers("/api/v1/carts/**").permitAll()
                         .requestMatchers("/api/v1/admin/**").hasRole(Role.ADMIN.name())
-                        .requestMatchers(HttpMethod.POST, "/api/v1/users", "/api/v1/auth/login", "/api/v1/auth/refresh")
+                        .requestMatchers(HttpMethod.POST, "/api/v1/users", "/api/v1/auth/login", "/api/v1/auth/refresh", "/api/v1/checkout/webhook")
                         .permitAll()
                         .anyRequest().authenticated()
                 )
