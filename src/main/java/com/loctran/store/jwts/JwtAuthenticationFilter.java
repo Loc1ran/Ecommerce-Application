@@ -1,8 +1,6 @@
-package com.loctran.store.filters;
+package com.loctran.store.jwts;
 
-import com.loctran.store.entities.Jwt;
 import com.loctran.store.entities.Role;
-import com.loctran.store.services.JwtService;
 import com.loctran.store.services.UserUserDetailsService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

@@ -1,11 +1,6 @@
-package com.loctran.store.controllers;
+package com.loctran.store.payments;
 
-import com.loctran.store.dtos.CheckoutRequest;
-import com.loctran.store.dtos.CheckoutResponse;
-import com.loctran.store.dtos.WebhookRequest;
 import com.loctran.store.exceptions.ErrorResponse;
-import com.loctran.store.exceptions.PaymentException;
-import com.loctran.store.services.CheckoutService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

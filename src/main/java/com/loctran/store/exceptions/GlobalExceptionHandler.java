@@ -1,5 +1,6 @@
 package com.loctran.store.exceptions;
 
+import com.loctran.store.auth.UnauthorizedException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;

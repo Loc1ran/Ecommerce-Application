@@ -1,4 +1,4 @@
-package com.loctran.store.exceptions;
+package com.loctran.store.auth;
 
 public class UnauthorizedException extends RuntimeException {
     public UnauthorizedException(String message) {

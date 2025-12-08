@@ -1,4 +1,4 @@
-package com.loctran.store.config;
+package com.loctran.store.payments;
 
 import com.stripe.Stripe;
 import jakarta.annotation.PostConstruct;

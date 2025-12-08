@@ -1,7 +1,7 @@
 package com.loctran.store.config;
 
 import com.loctran.store.entities.Role;
-import com.loctran.store.filters.JwtAuthenticationFilter;
+import com.loctran.store.jwts.JwtAuthenticationFilter;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

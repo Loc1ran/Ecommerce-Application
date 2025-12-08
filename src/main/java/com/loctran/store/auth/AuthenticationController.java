@@ -1,8 +1,5 @@
-package com.loctran.store.controllers;
+package com.loctran.store.auth;
 
-import com.loctran.store.dtos.AuthenticationRequest;
-import com.loctran.store.dtos.AuthenticationResponse;
-import com.loctran.store.services.AuthenticationServices;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;

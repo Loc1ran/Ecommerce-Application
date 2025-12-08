@@ -1,7 +1,5 @@
-package com.loctran.store.services;
+package com.loctran.store.payments;
 
-import com.loctran.store.dtos.PaymentResult;
-import com.loctran.store.dtos.WebhookRequest;
 import com.loctran.store.entities.Order;
 
 import java.util.Optional;

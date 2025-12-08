@@ -1,4 +1,4 @@
-package com.loctran.store.dtos;
+package com.loctran.store.auth;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;

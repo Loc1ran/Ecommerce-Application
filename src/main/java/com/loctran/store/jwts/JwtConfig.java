@@ -1,4 +1,4 @@
-package com.loctran.store.config;
+package com.loctran.store.jwts;
 
 import io.jsonwebtoken.security.Keys;
 import lombok.Data;

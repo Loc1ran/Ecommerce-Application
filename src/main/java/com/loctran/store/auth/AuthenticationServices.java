@@ -1,11 +1,9 @@
-package com.loctran.store.services;
+package com.loctran.store.auth;
 
-import com.loctran.store.dtos.AuthenticationRequest;
-import com.loctran.store.dtos.AuthenticationResponse;
-import com.loctran.store.entities.Jwt;
+import com.loctran.store.jwts.Jwt;
 import com.loctran.store.entities.User;
-import com.loctran.store.exceptions.UnauthorizedException;
 import com.loctran.store.repositories.UserRepository;
+import com.loctran.store.jwts.JwtService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;

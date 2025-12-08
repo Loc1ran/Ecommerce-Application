@@ -1,18 +1,10 @@
-package com.loctran.store.services;
+package com.loctran.store.jwts;
 
-import com.loctran.store.config.JwtConfig;
-import com.loctran.store.entities.Jwt;
-import com.loctran.store.entities.Role;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.security.Keys;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import javax.crypto.SecretKey;
-import java.time.Instant;
-import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.Map;
 
@@ -42,7 +34,7 @@ public class JwtService {
 
     public Jwt parseToken(String token) {
         try {
-            var claims = getClaimsFromToken(token);
+            Claims claims = getClaimsFromToken(token);
             return new Jwt(claims, jwtConfig.getSecretKey());
         } catch (Exception e) {
             return null;

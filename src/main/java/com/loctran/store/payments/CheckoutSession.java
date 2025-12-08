@@ -1,4 +1,4 @@
-package com.loctran.store.services;
+package com.loctran.store.payments;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
