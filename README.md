@@ -1,6 +1,6 @@
 # 🛒 E-Commerce Platform (Backend API)
 
-A **production-style backend API** for an e-commerce platform, built as a **learning project**. The system enables users to browse products, manage shopping carts, place orders, and securely process payments. While fully functional, the project primarily demonstrates **backend development, security best practices, and DevOps processes** including automated testing, containerization, and CI/CD deployment.
+A **production-style backend API** for an e-commerce platform, built as a **learning project**. The system enables users to browse products, manage shopping carts, place orders, and securely process payments. While fully functional, the project primarily demonstrates **backend development, security best practices.
 
 ---
 
@@ -16,8 +16,7 @@ A **production-style backend API** for an e-commerce platform, built as a **lear
 ### Admin Features
 - Product management (create, update, delete)  
 - Inventory control  
-- Category organization  
-- Order oversight and monitoring  
+- Category organization   
 
 ### Technical Highlights
 - JWT Authentication with access and refresh tokens  
@@ -44,32 +43,9 @@ A **production-style backend API** for an e-commerce platform, built as a **lear
 **Database:**  
 - PostgreSQL  
 
-**DevOps & Tools:**  
-- Docker & Docker Compose  
-- Spring Dotenv for environment management  
-- Maven build tool  
-
 **Key Dependencies:**  
 - MapStruct – DTO mapping  
 - Lombok – Boilerplate reduction  
 - Stripe Java SDK – Payment processing  
 - JJWT – JWT token generation  
 - Bean Validation – Input validation  
-
----
-
-## Architecture
-
-- **Layered design:** Controller → Service → Repository  
-- **Stateless authentication** using JWT  
-- **Separation of concerns** between business logic and persistence  
-- **Production-ready features:** Payment webhooks, role-based access control, and API documentation  
-
----
-
-## Installation & Development
-
-1. Clone the repository:  
-```bash
-git clone https://github.com/your-username/ecommerce-backend.git
-cd ecommerce-backend
