@@ -29,17 +29,14 @@ public class CheckoutController {
             @RequestHeader Map<String, String> signature,
             @RequestBody String payload
     ){
-        System.out.println("🔥🔥🔥 WEBHOOK HIT !!! 🔥🔥🔥");
-        System.out.println("Headers = " + signature);
-        System.out.println("Payload = " + payload);
         checkoutService.handleWebhookEvent(new WebhookRequest(signature, payload));
     }
 
     @ExceptionHandler(PaymentException.class)
     public ResponseEntity<?> handlePaymentException(PaymentException ex) {
         ErrorResponse error = new ErrorResponse(
-                HttpStatus.NOT_FOUND.value(),
-                HttpStatus.NOT_FOUND.getReasonPhrase(),
+                HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(),
                 ex.getMessage(),
                 LocalDateTime.now()
         );

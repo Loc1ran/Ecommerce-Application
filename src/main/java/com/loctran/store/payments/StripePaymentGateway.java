@@ -10,6 +10,7 @@ import com.stripe.model.PaymentIntent;
 import com.stripe.model.StripeObject;
 import com.stripe.model.checkout.Session;
 import com.stripe.net.Webhook;
+import com.stripe.net.RequestOptions;
 import com.stripe.param.checkout.SessionCreateParams;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -32,14 +33,21 @@ public class StripePaymentGateway implements PaymentGateway {
                     .setMode(SessionCreateParams.Mode.PAYMENT)
                     .setSuccessUrl(websiteUrl + "/checkout-success?orderId=" + order.getOrderId())
                     .setCancelUrl(websiteUrl + "/checkout-cancel")
-                    .putMetadata("order_id", order.getOrderId().toString());
+                    .putMetadata("order_id", order.getOrderId().toString())
+                    .setPaymentIntentData(SessionCreateParams.PaymentIntentData.builder()
+                            .putMetadata("order_id", order.getOrderId().toString()).build());
 
             order.getOrderItems().forEach(item -> {
                 var lineItem = createLineItem(item);
                 builder.addLineItem(lineItem);
             });
 
-            Session session = Session.create(builder.build());
+            // shortcut: retries reuse the order ID; persist a checkout key to deduplicate separate requests.
+            RequestOptions options = RequestOptions.builder()
+                    .setIdempotencyKey("checkout-order-" + order.getOrderId())
+                    .setMaxNetworkRetries(2)
+                    .build();
+            Session session = Session.create(builder.build(), options);
 
             return new CheckoutSession(session.getUrl());
         } catch (StripeException ex) {
@@ -52,6 +60,9 @@ public class StripePaymentGateway implements PaymentGateway {
     public Optional<PaymentResult> parseWebhookRequest(WebhookRequest webhookRequest) {
         try {
             String signature = webhookRequest.getHeaders().get("stripe-signature");
+            if (signature == null || signature.isBlank()) {
+                throw new PaymentException("Missing Stripe signature");
+            }
             String payload = webhookRequest.getPayload();
             Event event = Webhook.constructEvent(payload, signature, webhookSecretKey);
 
@@ -73,8 +84,17 @@ public class StripePaymentGateway implements PaymentGateway {
                 () -> new PaymentException("Cannot deserialize event, Check SDK and API version.")
         );
 
-        var paymentIntent = (PaymentIntent) stripeObject;
-        return Long.valueOf(paymentIntent.getMetadata().get("order_id"));
+        if (!(stripeObject instanceof PaymentIntent paymentIntent)) {
+            throw new PaymentException("Expected a PaymentIntent event");
+        }
+        String orderId = paymentIntent.getMetadata().get("order_id");
+        try {
+            long id = Long.parseLong(orderId);
+            if (id <= 0) throw new NumberFormatException();
+            return id;
+        } catch (NumberFormatException ex) {
+            throw new PaymentException("PaymentIntent is missing a valid order_id");
+        }
     }
 
     private static SessionCreateParams.LineItem createLineItem(OrderItem item) {
