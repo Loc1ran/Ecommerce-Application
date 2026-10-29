@@ -49,9 +49,14 @@ public class CheckoutService {
         }
     }
 
+    @Transactional
     public void handleWebhookEvent(WebhookRequest request){
         paymentGateway.parseWebhookRequest(request).ifPresent(paymentRequest -> {
-            Order order = orderRepository.findById(paymentRequest.getOrderId()).orElseThrow();
+            Order order = orderRepository.findForPaymentUpdate(paymentRequest.getOrderId())
+                    .orElseThrow(() -> new PaymentException("Payment order not found"));
+            if (order.getStatus() == OrderStatus.PAID || order.getStatus() == paymentRequest.getOrderStatus()) {
+                return;
+            }
             order.setStatus(paymentRequest.getOrderStatus());
             orderRepository.save(order);
         });

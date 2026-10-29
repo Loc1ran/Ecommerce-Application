@@ -28,6 +28,7 @@
     </scm>
     <properties>
         <java.version>25</java.version>
+        <maven.compiler.proc>full</maven.compiler.proc>
     </properties>
     <dependencies>
         <dependency>
@@ -58,7 +59,7 @@
         <dependency>
             <artifactId>lombok</artifactId>
             <groupId>org.projectlombok</groupId>
-            <scope>annotationProcessor</scope>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.postgresql</groupId>
@@ -130,6 +131,13 @@
 
     <build>
         <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <argLine>"-javaagent:${settings.localRepository}/org/mockito/mockito-core/${mockito.version}/mockito-core-${mockito.version}.jar" -Xshare:off</argLine>
+                </configuration>
+            </plugin>
             <plugin>
                 <groupId>org.flywaydb</groupId>
                 <artifactId>flyway-maven-plugin</artifactId>
